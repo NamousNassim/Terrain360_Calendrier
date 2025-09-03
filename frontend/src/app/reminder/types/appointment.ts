@@ -10,4 +10,7 @@ export interface Appointment {
   notes: string;
   agentId: number;
   agentName: string;
+  location?: string;
+  contactEmail?: string;
+  contactPhone?: string;
 }

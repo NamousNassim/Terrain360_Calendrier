@@ -3,11 +3,11 @@
 import React from 'react';
 import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { fr } from 'date-fns/locale'; // Changé de enUS à fr
 import { Appointment } from '../../types/appointment';
 
 const locales = {
-  'en-US': enUS,
+  'fr-FR': fr, // Changé pour le français
 };
 
 const localizer = dateFnsLocalizer({
@@ -44,17 +44,17 @@ const CalendarMain: React.FC<CalendarMainProps> = ({
   onSelectEvent
 }) => {
   const EventComponent = ({ event }: { event: any }) => {
-    const appointment = event.resource;
+    const appointment = event.resource as Appointment;
     return (
       <div 
         className="text-white text-xs p-1 rounded cursor-pointer"
         style={{ 
-          backgroundColor: typeColors[appointment.type],
+          backgroundColor: typeColors[appointment.type as keyof typeof typeColors],
           height: '100%'
         }}
       >
-        <div className="font-medium">{appointment.clientName}</div>
-        <div className="text-xs opacity-90">{appointment.company}</div>
+        <div className="font-medium truncate">{appointment.clientName}</div>
+        <div className="text-xs opacity-90 truncate">{appointment.company}</div>
         <div className="text-xs opacity-80">{appointment.startTime}</div>
       </div>
     );
@@ -64,8 +64,8 @@ const CalendarMain: React.FC<CalendarMainProps> = ({
     <div className="flex-1 p-6">
       <div className="bg-white rounded-lg shadow-sm border h-full">
         <div className="p-4 border-b">
-          <h1 className="text-2xl font-bold text-gray-900">Agent Calendar</h1>
-          <p className="text-gray-600">Manage and view all appointments</p>
+          <h1 className="text-2xl font-bold text-gray-900">Calendrier des Agents</h1>
+          <p className="text-gray-600">Gérer et visualiser tous les rendez-vous</p>
         </div>
         
         <div className="p-4 h-full">
@@ -85,8 +85,8 @@ const CalendarMain: React.FC<CalendarMainProps> = ({
             }}
             eventPropGetter={(event) => ({
               style: {
-                backgroundColor: typeColors[event.resource.type],
-                borderColor: typeColors[event.resource.type],
+                backgroundColor: typeColors[event.resource.type as keyof typeof typeColors],
+                borderColor: typeColors[event.resource.type as keyof typeof typeColors],
                 color: 'white'
               }
             })}
@@ -96,6 +96,16 @@ const CalendarMain: React.FC<CalendarMainProps> = ({
             showMultiDayTimes
             selectable={false}
             toolbar={true}
+            messages={{
+              next: "Suivant",
+              previous: "Précédent",
+              today: "Aujourd'hui",
+              month: "Mois",
+              week: "Semaine",
+              day: "Jour",
+              agenda: "Agenda"
+            }}
+            culture="fr-FR"
           />
         </div>
       </div>

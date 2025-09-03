@@ -6,12 +6,12 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import CalendarMain from './components/Calendar/CalendarMain';
 import CalendarSidebar from './components/Calendar/CalendarSidebar';
-import AppointmentModal from '../components/Appointments/AppointmentModal'; // Fixed path - go up one level
+import AppointmentModal from './components/Appointments/AppointmentModal';// Fixed path - go up one level
 import { mockAppointments } from './data/mockData';
 import { Appointment } from './types/appointment';
-import { convertToCalendarEvents, navigateCalendar } from '../utils/calendarUtils'
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import './calendar.css'
+import './styles/calendar.css'
+import { convertToCalendarEvents, navigateCalendar } from './utils/calendarUtils';
 
 export default function CalendarApp() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);

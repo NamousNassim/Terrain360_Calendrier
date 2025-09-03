@@ -1,23 +1,23 @@
 import { format, parse, startOfWeek, getDay, addMonths, subMonths, addWeeks, subWeeks, addDays, subDays } from 'date-fns';
-import { enUS } from 'date-fns/locale';
+import { fr } from 'date-fns/locale'; // Changé pour le français
 import { View } from 'react-big-calendar';
 import { Appointment } from '../types/appointment';
 
 const locales = {
-  'en-US': enUS,
+  'fr-FR': fr, // Changé pour le français
 };
 
 export const localizer = {
-  format: (date: Date, formatStr: string) => format(date, formatStr),
+  format: (date: Date, formatStr: string) => format(date, formatStr, { locale: fr }),
   parse: (str: string, formatStr: string) => parse(str, formatStr, new Date()),
-  startOfWeek: (date: Date) => startOfWeek(date),
+  startOfWeek: (date: Date) => startOfWeek(date, { locale: fr }),
   getDay: (date: Date) => getDay(date),
   locales
 };
 
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat('fr-FR', {
     weekday: 'long',
     year: 'numeric',
     month: 'long',
@@ -26,11 +26,8 @@ export const formatDate = (dateString: string) => {
 };
 
 export const formatTime = (time: string) => {
-  // Convert 24-hour format to 12-hour format
-  const [hours, minutes] = time.split(':').map(Number);
-  const ampm = hours >= 12 ? 'PM' : 'AM';
-  const displayHours = hours % 12 || 12;
-  return `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+  // Retourner le format 24h pour le français
+  return time;
 };
 
 export const convertToCalendarEvents = (appointments: Appointment[]) => {
