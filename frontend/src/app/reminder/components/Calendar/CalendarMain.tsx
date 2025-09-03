@@ -1,69 +1,106 @@
+'use client';
+
 import React from 'react';
-import { CalendarWrapper } from './CalendarWrapper';
-import { Appointment, statusColors, typeColors, CalendarView } from '../../types';
-import { format } from 'date-fns';
+import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
+import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+import { Appointment } from '../../types/appointment';
+
+const locales = {
+  'en-US': enUS,
+};
+
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+});
 
 interface CalendarMainProps {
-  view: CalendarView;
   events: any[];
   date: Date;
+  view: View;
   appointments: Appointment[];
-  onView: (view: any) => void;
+  onView: (view: View) => void;
   onNavigate: (date: Date) => void;
   onSelectEvent: (event: any) => void;
 }
 
-export const CalendarMain: React.FC<CalendarMainProps> = ({
-  view,
+const typeColors = {
+  meeting: '#3B82F6',
+  call: '#10B981',
+  presentation: '#F59E0B',
+  consultation: '#8B5CF6'
+};
+
+const CalendarMain: React.FC<CalendarMainProps> = ({
   events,
   date,
-  appointments,
+  view,
   onView,
   onNavigate,
   onSelectEvent
 }) => {
-  if (view === 'agenda') {
+  const EventComponent = ({ event }: { event: any }) => {
+    const appointment = event.resource;
     return (
-      <div className="flex-1 p-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Agenda</h2>
-          <div className="space-y-4">
-            {appointments.map(apt => (
-              <div key={apt.id} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                <div className="w-16 text-sm font-medium text-gray-500">
-                  {apt.startTime}
-                </div>
-                <div 
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: typeColors[apt.type] }}
-                ></div>
-                <div className="flex-1">
-                  <div className="font-medium text-gray-900">{apt.clientName} - {apt.company}</div>
-                  <div className="text-sm text-gray-500">{apt.type}</div>
-                </div>
-                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[apt.status]}`}>
-                  {apt.status}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
+      <div 
+        className="text-white text-xs p-1 rounded cursor-pointer"
+        style={{ 
+          backgroundColor: typeColors[appointment.type],
+          height: '100%'
+        }}
+      >
+        <div className="font-medium">{appointment.clientName}</div>
+        <div className="text-xs opacity-90">{appointment.company}</div>
+        <div className="text-xs opacity-80">{appointment.startTime}</div>
       </div>
     );
-  }
+  };
 
   return (
     <div className="flex-1 p-6">
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 h-full overflow-hidden">
-        <CalendarWrapper
-          events={events}
-          view={view}
-          date={date}
-          onView={onView}
-          onNavigate={onNavigate}
-          onSelectEvent={onSelectEvent}
-        />
+      <div className="bg-white rounded-lg shadow-sm border h-full">
+        <div className="p-4 border-b">
+          <h1 className="text-2xl font-bold text-gray-900">Agent Calendar</h1>
+          <p className="text-gray-600">Manage and view all appointments</p>
+        </div>
+        
+        <div className="p-4 h-full">
+          <Calendar
+            localizer={localizer}
+            events={events}
+            date={date}
+            view={view}
+            onView={onView}
+            onNavigate={onNavigate}
+            onSelectEvent={onSelectEvent}
+            startAccessor="start"
+            endAccessor="end"
+            style={{ height: 'calc(100% - 80px)' }}
+            components={{
+              event: EventComponent
+            }}
+            eventPropGetter={(event) => ({
+              style: {
+                backgroundColor: typeColors[event.resource.type],
+                borderColor: typeColors[event.resource.type],
+                color: 'white'
+              }
+            })}
+            popup
+            views={['month', 'week', 'day']}
+            step={30}
+            showMultiDayTimes
+            selectable={false}
+            toolbar={true}
+          />
+        </div>
       </div>
     </div>
   );
 };
+
+export default CalendarMain;
