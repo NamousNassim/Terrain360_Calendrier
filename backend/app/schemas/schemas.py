@@ -6,6 +6,8 @@ from typing import Optional
 class Token(BaseModel):
     access_token: str
     token_type: str
+    username: str
+    email: str
 
 class TokenData(BaseModel):
     username: str | None = None
@@ -44,11 +46,11 @@ class Company(CompanyBase):
 # Appointment schemas
 class AppointmentBase(BaseModel):
     appointment_time: datetime
-    status: str = "scheduled"
+    status: str = "a faire"
 
 class AppointmentCreate(AppointmentBase):
     company_id: int
-    agent_id: int
+    # agent_id will be set from the authenticated user
 
 class Appointment(AppointmentBase):
     id: int
@@ -57,6 +59,9 @@ class Appointment(AppointmentBase):
     
     class Config:
         from_attributes = True
+
+class AppointmentStatusUpdate(BaseModel):
+    status: str
 
 # Response schemas
 class Message(BaseModel):

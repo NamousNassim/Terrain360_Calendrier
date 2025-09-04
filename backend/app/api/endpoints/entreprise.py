@@ -27,7 +27,12 @@ def create_company(company: CompanyCreate, db: Session = Depends(get_db)):
 
 @router.get("/", response_model=List[Company])
 def read_companies(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    companies = db.query(CompanyModel).offset(skip).limit(limit).all()
+    # Add ORDER BY clause for SQL Server compatibility
+    companies = db.query(CompanyModel)\
+        .order_by(CompanyModel.id)\
+        .offset(skip)\
+        .limit(limit)\
+        .all()
     return companies
 
 @router.get("/{company_id}", response_model=Company)

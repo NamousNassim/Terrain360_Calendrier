@@ -1,7 +1,7 @@
 export interface Appointment {
   id: number;
-  appointment_time: string; // ISO datetime string
-  status: string; // "a faire", etc.
+  appointment_time: string;
+  status: string; 
   company: {
     client_name: string;
     notes: string;

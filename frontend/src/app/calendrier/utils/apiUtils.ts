@@ -1,13 +1,11 @@
 import { Appointment } from '../types/appointment';
 
-// Get API base URL from environment variables
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 const APPOINTMENTS_ENDPOINT = process.env.NEXT_PUBLIC_API_APPOINTMENTS_ENDPOINT || '/api/appointments';
 
 export const fetchUserAppointments = async (token: string): Promise<Appointment[]> => {
   try {
     const url = `${API_BASE_URL}${APPOINTMENTS_ENDPOINT}`;
-    console.log('Fetching appointments from:', url); // For debugging
     
     const response = await fetch(url, {
       method: 'GET',
@@ -19,15 +17,18 @@ export const fetchUserAppointments = async (token: string): Promise<Appointment[
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error('401: Unauthorized');
+        // Token expired or invalid
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_data');
+        window.location.href = '/login';
+        throw new Error('Session expirée');
       }
-      throw new Error(`HTTP ${response.status}: Failed to fetch appointments`);
+      throw new Error(`Erreur HTTP ${response.status}: Impossible de charger les rendez-vous`);
     }
 
-    const data = await response.json();
-    return data;
+    return await response.json();
   } catch (error) {
-    console.error('Error fetching appointments:', error);
+    console.error('Erreur lors du chargement des rendez-vous:', error);
     throw error;
   }
 };
@@ -45,10 +46,16 @@ export const deleteAppointment = async (token: string, appointmentId: number): P
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to delete appointment: ${response.status}`);
+      if (response.status === 401) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_data');
+        window.location.href = '/login';
+        throw new Error('Session expirée');
+      }
+      throw new Error(`Impossible de supprimer le rendez-vous: ${response.status}`);
     }
   } catch (error) {
-    console.error('Error deleting appointment:', error);
+    console.error('Erreur lors de la suppression:', error);
     throw error;
   }
 };
@@ -71,10 +78,16 @@ export const updateAppointmentStatus = async (
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to update appointment: ${response.status}`);
+      if (response.status === 401) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_data');
+        window.location.href = '/login';
+        throw new Error('Session expirée');
+      }
+      throw new Error(`Impossible de mettre à jour le rendez-vous: ${response.status}`);
     }
   } catch (error) {
-    console.error('Error updating appointment:', error);
+    console.error('Erreur lors de la mise à jour:', error);
     throw error;
   }
 };
