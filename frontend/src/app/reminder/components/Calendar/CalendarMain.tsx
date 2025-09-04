@@ -3,11 +3,11 @@
 import React from 'react';
 import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
-import { fr } from 'date-fns/locale'; // Changé de enUS à fr
+import { fr } from 'date-fns/locale';
 import { Appointment } from '../../types/appointment';
 
 const locales = {
-  'fr-FR': fr, // Changé pour le français
+  'fr-FR': fr,
 };
 
 const localizer = dateFnsLocalizer({
@@ -28,11 +28,14 @@ interface CalendarMainProps {
   onSelectEvent: (event: any) => void;
 }
 
-const typeColors = {
-  meeting: '#3B82F6',
-  call: '#10B981',
-  presentation: '#F59E0B',
-  consultation: '#8B5CF6'
+const getStatusColor = (status: string) => {
+  const colors = {
+    'a faire': '#F59E0B', // yellow
+    'fait': '#10B981', // green
+    'confirme': '#3B82F6', // blue
+    'annule': '#EF4444' // red
+  };
+  return colors[status as keyof typeof colors] || '#6B7280';
 };
 
 const CalendarMain: React.FC<CalendarMainProps> = ({
@@ -49,13 +52,18 @@ const CalendarMain: React.FC<CalendarMainProps> = ({
       <div 
         className="text-white text-xs p-1 rounded cursor-pointer"
         style={{ 
-          backgroundColor: typeColors[appointment.type as keyof typeof typeColors],
+          backgroundColor: getStatusColor(appointment.status),
           height: '100%'
         }}
       >
-        <div className="font-medium truncate">{appointment.clientName}</div>
-        <div className="text-xs opacity-90 truncate">{appointment.company}</div>
-        <div className="text-xs opacity-80">{appointment.startTime}</div>
+        <div className="font-medium truncate">{appointment.company.client_name}</div>
+        <div className="text-xs opacity-90 truncate">{appointment.company.location}</div>
+        <div className="text-xs opacity-80">
+          {new Date(appointment.appointment_time).toLocaleTimeString('fr-FR', {
+            hour: '2-digit',
+            minute: '2-digit'
+          })}
+        </div>
       </div>
     );
   };
@@ -85,8 +93,8 @@ const CalendarMain: React.FC<CalendarMainProps> = ({
             }}
             eventPropGetter={(event) => ({
               style: {
-                backgroundColor: typeColors[event.resource.type as keyof typeof typeColors],
-                borderColor: typeColors[event.resource.type as keyof typeof typeColors],
+                backgroundColor: getStatusColor(event.resource.status),
+                borderColor: getStatusColor(event.resource.status),
                 color: 'white'
               }
             })}
