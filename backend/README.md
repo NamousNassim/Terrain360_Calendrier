@@ -4,7 +4,7 @@ Ce projet contient le backend de l'application **Calendrier**, développé avec 
 
 ## 🚀 Prérequis
 
-- Python 3.9+
+- Python 
 - pip 
 - Git 
 
@@ -13,7 +13,7 @@ Ce projet contient le backend de l'application **Calendrier**, développé avec 
 ### 1. Créer un environnement virtuel 
 ```bash
 python -m venv venv
-source venv/bin/activate  # Sur Windows: 
+source venv/bin/activate  
 ```
 
 ### 2. Installer les dépendances
